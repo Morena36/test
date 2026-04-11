@@ -1,0 +1,118 @@
+PROYECTO: Página HTML de sorpresa romántica
+===========================================
+Alojada en GitHub Pages: https://morena36.github.io/test/
+Número de WhatsApp destino: +54 9 11 6144-3954
+
+
+── QUÉ HACE LA PÁGINA ──────────────────────────────────────────
+Una página oscura y elegante que:
+1. Fade-in desde negro al cargar (suave, 2 segundos)
+2. Muestra un video (video.mp4) en formato 16:9, responsive
+3. Botón de sonido 🔇/🔊 (el video arranca muted por política del navegador)
+4. Flecha animada apuntando hacia abajo
+5. Botón grande "Hacé click acá para ver la sorpresa"
+6. Al hacer click se despliegan 2 opciones (tarjetas):
+   - 🎬 Ir al cine → abre WhatsApp con mensaje pre-escrito
+   - 🍕 Salir a comer → abre WhatsApp con mensaje pre-escrito
+7. 2 opciones extra ocultas (class="card-hidden") listas para activar
+
+
+── MENSAJES DE WHATSAPP ────────────────────────────────────────
+Cine:  "¿Vamos al cine? 🍿"
+Comer: "¿Comemos algo juntos? 🍕"
+(URL encode directo en el onclick de cada botón)
+
+
+── ARCHIVOS DEL PROYECTO ───────────────────────────────────────
+sorpresa.html  → archivo principal (o index.html si se renombra)
+video.mp4      → debe estar en la MISMA carpeta que el HTML
+
+
+── DISEÑO Y ESTÉTICA ───────────────────────────────────────────
+- Tema oscuro (#0a0a0a fondo)
+- Tipografías: Playfair Display (serif elegante) + DM Sans (sans-serif limpia)
+- Colores: rosa #f0436a, dorado #e8c97a, blanco roto #f5f0eb
+- Fondo con gradientes radiales sutiles (rojo oscuro arriba, azul oscuro abajo)
+- Animaciones CSS puras: fadeDown, fadeUp, bounce, arrowBounce
+- Tarjetas con colores diferenciados: dorado para cine, naranja para comer
+- Entrada suave: overlay negro que hace fade-out al cargar
+
+
+── VARIABLES CSS PARA AJUSTAR EL VIDEO ─────────────────────────
+--video-max-width: 420px;   → ancho máximo en móvil
+--video-ratio: 16/9;        → proporción (cambiar a 9/16 si el video es vertical)
+--video-radius: 20px;       → bordes redondeados
+
+
+── DESKTOP (media query 768px+) ────────────────────────────────
+El video se agranda automáticamente a 700px de ancho.
+El container y controles también se expanden.
+
+
+── SONIDO ──────────────────────────────────────────────────────
+El video arranca MUTED (obligatorio para autoplay en Chrome/Safari móvil).
+El botón 🔇 Sonido llama a toggleSonido() que hace vid.muted = !vid.muted.
+No hace falta archivo de audio separado: el sonido está dentro del mp4.
+
+
+── CÓMO ACTIVAR LAS OPCIONES OCULTAS (3 y 4) ──────────────────
+Buscar:   class="option-card card-hidden"
+Cambiar:  class="option-card"
+Editar el onclick con el mensaje (URL encode) y el contenido de .option-body
+
+
+── CÓMO AGREGAR MÁS OPCIONES ──────────────────────────────────
+Copiar este bloque dentro de <div class="options-panel">:
+
+<button class="option-card" onclick="window.open('https://wa.me/5491161443954?text=MENSAJE_URL_ENCODED','_blank')">
+  <div class="option-card-inner">
+    <div class="option-icon">EMOJI</div>
+    <div class="option-body">
+      <div class="option-label">Título</div>
+      <div class="option-sub">Descripción corta</div>
+    </div>
+    <div class="option-arrow">→</div>
+  </div>
+</button>
+
+Para URL encode: https://www.urlencoder.org/
+
+
+── PROBLEMA 404 EN GITHUB PAGES ────────────────────────────────
+GitHub Pages sirve index.html por defecto.
+Para acceder a sorpresa.html usar la URL completa:
+  https://morena36.github.io/test/sorpresa.html
+Si sigue dando 404, verificar que el archivo esté en la rama main (o gh-pages).
+
+
+── HISTORIAL DE VERSIONES ──────────────────────────────────────
+v1: HTML básico con video.mp4 vertical + botón sorpresa + panel WhatsApp
+v2: Se intentó embeber trailer de YouTube (falló por Error 153)
+v3: Vuelta a video.mp4 + rediseño panel WhatsApp
+v4: Video responsive con variables CSS + sistema de botones/opciones
+v5: Ratio cambiado a 16/9, botón de sonido, links WA directos
+v6: Botón toggle ratio eliminado (innecesario), pétalos animados (descartados por performance)
+v7 (actual): Entrada suave desde negro, sin pétalos, desktop responsive
+
+
+── TÉCNICA DE EDICIÓN RÁPIDA (str_replace) ─────────────────────
+En lugar de reescribir el archivo entero, se edita solo la línea exacta:
+
+1. Buscar el texto EXACTO que está en el archivo (con grep -n si hace falta)
+2. Usar str_replace con old_str = texto original, new_str = texto nuevo
+3. Si falla "string not found": usar view para ver el archivo actualizado
+   (cada edición invalida el contexto anterior)
+4. Para borrar: new_str vacío o solo lo que queda
+5. Para archivos en /mnt/user-data/uploads (read-only): copiar primero a /home/claude/
+
+Ejemplo:
+  old_str: <video src="video.mp4" autoplay loop muted playsinline>
+  new_str: <video src="video.mp4" autoplay loop muted playsinline id="vid">
+
+Esto es 10x más rápido que regenerar el HTML completo.
+
+
+── STACK ────────────────────────────────────────────────────────
+HTML5 + CSS3 puro + JavaScript vanilla
+Sin frameworks, sin dependencias externas salvo Google Fonts
+Compatible con Chrome mobile (principal target) y desktop

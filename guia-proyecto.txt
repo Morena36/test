@@ -1,118 +1,147 @@
 PROYECTO: Página HTML de sorpresa romántica
 ===========================================
-Alojada en GitHub Pages: https://morena36.github.io/test/
-Número de WhatsApp destino: +54 9 11 6144-3954
+Repo GitHub Pages: https://morena36.github.io/test/
+WhatsApp destino:  +54 9 11 6144-3954
 
 
-── QUÉ HACE LA PÁGINA ──────────────────────────────────────────
-Una página oscura y elegante que:
-1. Fade-in desde negro al cargar (suave, 2 segundos)
-2. Muestra un video (video.mp4) en formato 16:9, responsive
-3. Botón de sonido 🔇/🔊 (el video arranca muted por política del navegador)
-4. Flecha animada apuntando hacia abajo
-5. Botón grande "Hacé click acá para ver la sorpresa"
-6. Al hacer click se despliegan 2 opciones (tarjetas):
-   - 🎬 Ir al cine → abre WhatsApp con mensaje pre-escrito
-   - 🍕 Salir a comer → abre WhatsApp con mensaje pre-escrito
-7. 2 opciones extra ocultas (class="card-hidden") listas para activar
+── ARCHIVOS EN EL REPO ─────────────────────────────────────────
+sorpresa.html  → página principal (puede llamarse como quieras)
+video.mp4      → video que se muestra (debe estar en el mismo repo)
+
+El HTML y el video tienen que estar en la MISMA carpeta del repo.
+
+
+── MÚLTIPLES PÁGINAS EN EL MISMO REPO ─────────────────────────
+Podés tener todos los HTML que quieras en el mismo repo:
+  morena36.github.io/test/sorpresa.html
+  morena36.github.io/test/sorpresa2.html
+  morena36.github.io/test/navidad.html
+  morena36.github.io/test/cumple.html
+
+NO hace falta que se llame index.html. Cualquier nombre funciona
+siempre que uses la URL completa con el nombre del archivo.
+
+
+── VIDEO ────────────────────────────────────────────────────────
+Por ahora: src="video.mp4" → subir video.mp4 al repo en GitHub.
+
+Para usar otro nombre de archivo:
+  src="micumple.mp4"  → subir micumple.mp4 al repo
+
+Para usar URL externa (ej. Cloudinary — gratis 25GB):
+  src="https://res.cloudinary.com/TU-CUENTA/video/upload/video.mp4"
+  → subís el video una sola vez a Cloudinary
+  → cambiás el link en el HTML para actualizar sin tocar GitHub
+
+El video arranca MUTED (obligatorio para autoplay Chrome/Safari móvil).
+El botón 🔇 Sonido desbloquea el audio con un tap.
+
+
+── QR ───────────────────────────────────────────────────────────
+Generá el QR UNA SOLA VEZ apuntando a la URL del HTML.
+Si querés cambiar el video: reemplazás el archivo en GitHub
+con el mismo nombre → el QR sigue funcionando igual.
+Herramienta: qr-code-generator.com
+
+
+── AJUSTES RÁPIDOS DEL VIDEO (variables CSS al tope del HTML) ──
+--video-max-width: 420px   → ancho en móvil
+--video-ratio: 16/9        → proporción. Cambiar a 9/16 si es vertical (reel)
+--video-radius: 20px       → redondeo de esquinas
+En desktop (768px+) el video se agranda solo a 700px.
 
 
 ── MENSAJES DE WHATSAPP ────────────────────────────────────────
-Cine:  "¿Vamos al cine? 🍿"
-Comer: "¿Comemos algo juntos? 🍕"
-(URL encode directo en el onclick de cada botón)
+Los mensajes están directamente en el onclick de cada botón:
+  window.open('https://wa.me/5491161443954?text=MENSAJE_AQUI','_blank')
+
+Para cambiar el mensaje: editá el texto entre ?text= y la comilla.
+Espacios = %20, emojis se pueden pegar directo (Chrome los codifica solo).
+Para mensajes complejos: urlencoder.org → codificá → pegá.
 
 
-── ARCHIVOS DEL PROYECTO ───────────────────────────────────────
-sorpresa.html  → archivo principal (o index.html si se renombra)
-video.mp4      → debe estar en la MISMA carpeta que el HTML
-
-
-── DISEÑO Y ESTÉTICA ───────────────────────────────────────────
-- Tema oscuro (#0a0a0a fondo)
-- Tipografías: Playfair Display (serif elegante) + DM Sans (sans-serif limpia)
-- Colores: rosa #f0436a, dorado #e8c97a, blanco roto #f5f0eb
-- Fondo con gradientes radiales sutiles (rojo oscuro arriba, azul oscuro abajo)
-- Animaciones CSS puras: fadeDown, fadeUp, bounce, arrowBounce
-- Tarjetas con colores diferenciados: dorado para cine, naranja para comer
-- Entrada suave: overlay negro que hace fade-out al cargar
-
-
-── VARIABLES CSS PARA AJUSTAR EL VIDEO ─────────────────────────
---video-max-width: 420px;   → ancho máximo en móvil
---video-ratio: 16/9;        → proporción (cambiar a 9/16 si el video es vertical)
---video-radius: 20px;       → bordes redondeados
-
-
-── DESKTOP (media query 768px+) ────────────────────────────────
-El video se agranda automáticamente a 700px de ancho.
-El container y controles también se expanden.
-
-
-── SONIDO ──────────────────────────────────────────────────────
-El video arranca MUTED (obligatorio para autoplay en Chrome/Safari móvil).
-El botón 🔇 Sonido llama a toggleSonido() que hace vid.muted = !vid.muted.
-No hace falta archivo de audio separado: el sonido está dentro del mp4.
-
-
-── CÓMO ACTIVAR LAS OPCIONES OCULTAS (3 y 4) ──────────────────
+── OPCIONES OCULTAS (3 y 4) ────────────────────────────────────
 Buscar:   class="option-card card-hidden"
 Cambiar:  class="option-card"
-Editar el onclick con el mensaje (URL encode) y el contenido de .option-body
+Editar el onclick con el mensaje y el contenido (.option-icon, .option-label, .option-sub)
 
+Para agregar más opciones, copiar este bloque dentro de .options-panel:
 
-── CÓMO AGREGAR MÁS OPCIONES ──────────────────────────────────
-Copiar este bloque dentro de <div class="options-panel">:
-
-<button class="option-card" onclick="window.open('https://wa.me/5491161443954?text=MENSAJE_URL_ENCODED','_blank')">
-  <div class="option-card-inner">
-    <div class="option-icon">EMOJI</div>
-    <div class="option-body">
-      <div class="option-label">Título</div>
-      <div class="option-sub">Descripción corta</div>
+  <button class="option-card" onclick="window.open('https://wa.me/5491161443954?text=MENSAJE','_blank')">
+    <div class="option-card-inner">
+      <div class="option-icon">EMOJI</div>
+      <div class="option-body">
+        <div class="option-label">Título</div>
+        <div class="option-sub">Descripción corta</div>
+      </div>
+      <div class="option-arrow">→</div>
     </div>
-    <div class="option-arrow">→</div>
-  </div>
-</button>
-
-Para URL encode: https://www.urlencoder.org/
+  </button>
 
 
-── PROBLEMA 404 EN GITHUB PAGES ────────────────────────────────
+── PANTALLA DE CARGA (imagen base64) ───────────────────────────
+La imagen de carga está embebida en base64 dentro del HTML.
+No necesita archivo externo. Funciona offline.
+
+Para cambiarla:
+1. Conseguí un PNG o JPG (recomendado menos de 500KB)
+2. Comprimilo en squoosh.app → WebP al 70-80% → puede quedar en ~9-80KB
+3. Convertilo en base64.guru/converter/encode/image
+4. En el HTML buscá:  src="data:image/png;base64,
+5. Reemplazá TODO el string largo de base64 por el tuyo
+6. Si es JPG: cambiá "image/png" por "image/jpeg"
+7. Si es WebP: cambiá "image/png" por "image/webp"
+
+Tamaño ideal antes de convertir: menos de 300KB
+Squoosh tip: WebP calidad 70 = calidad visual buena, peso mínimo
+
+
+── COLORES DE LA PÁGINA ────────────────────────────────────────
+--pink:  #f0436a  → rosa (acentos, bordes)
+--gold:  #e8c97a  → dorado (span en título, texto secundario)
+--ink:   #f5f0eb  → blanco roto (texto principal)
+--ink2:  #9a9090  → gris (textos secundarios)
+--bg:    #0a0a0a  → fondo negro
+
+
+── ACCESO A GITHUB PAGES ───────────────────────────────────────
 GitHub Pages sirve index.html por defecto.
-Para acceder a sorpresa.html usar la URL completa:
+Para cualquier otro nombre usar la URL completa:
   https://morena36.github.io/test/sorpresa.html
-Si sigue dando 404, verificar que el archivo esté en la rama main (o gh-pages).
+
+Si da 404: verificar que el archivo esté en la rama main (o gh-pages).
 
 
 ── HISTORIAL DE VERSIONES ──────────────────────────────────────
-v1: HTML básico con video.mp4 vertical + botón sorpresa + panel WhatsApp
-v2: Se intentó embeber trailer de YouTube (falló por Error 153)
-v3: Vuelta a video.mp4 + rediseño panel WhatsApp
-v4: Video responsive con variables CSS + sistema de botones/opciones
-v5: Ratio cambiado a 16/9, botón de sonido, links WA directos
-v6: Botón toggle ratio eliminado (innecesario), pétalos animados (descartados por performance)
-v7 (actual): Entrada suave desde negro, sin pétalos, desktop responsive
+v1: HTML básico, video vertical, botón sorpresa, panel WhatsApp
+v2: Se intentó embeber YouTube (falló)
+v3: Vuelta a video.mp4, rediseño panel WhatsApp
+v4: Variables CSS para video, sistema de botones/opciones
+v5: Ratio 16/9, botón de sonido, links WA directos
+v6: Botón toggle ratio eliminado, pétalos (descartados por performance)
+v7: Entrada suave desde negro, sin pétalos, desktop responsive
+v8: Pantalla de carga con imagen base64 + barra de progreso animada
+v9 (actual): Comentarios internos en el HTML, colores de texto corregidos,
+             imagen responsive sin circle-crop, barra más ancha
 
 
 ── TÉCNICA DE EDICIÓN RÁPIDA (str_replace) ─────────────────────
-En lugar de reescribir el archivo entero, se edita solo la línea exacta:
+En lugar de reescribir el archivo entero, se edita solo la línea exacta.
 
-1. Buscar el texto EXACTO que está en el archivo (con grep -n si hace falta)
-2. Usar str_replace con old_str = texto original, new_str = texto nuevo
-3. Si falla "string not found": usar view para ver el archivo actualizado
-   (cada edición invalida el contexto anterior)
-4. Para borrar: new_str vacío o solo lo que queda
-5. Para archivos en /mnt/user-data/uploads (read-only): copiar primero a /home/claude/
+Flujo:
+1. grep -n "texto_a_buscar" archivo.html  → encontrar número de línea
+2. view archivo.html [linea_inicio, linea_fin]  → ver el texto EXACTO
+3. str_replace:  old_str = texto original exacto
+                 new_str = texto nuevo
+4. Si falla "not found": el archivo cambió → volver al paso 2
+5. Archivos en /mnt/user-data/uploads son read-only → copiar primero a /home/claude/
 
-Ejemplo:
-  old_str: <video src="video.mp4" autoplay loop muted playsinline>
-  new_str: <video src="video.mp4" autoplay loop muted playsinline id="vid">
-
-Esto es 10x más rápido que regenerar el HTML completo.
+Regla clave: cada str_replace exitoso invalida el view anterior.
+Siempre re-leer antes de editar si hubo cambios.
 
 
 ── STACK ────────────────────────────────────────────────────────
 HTML5 + CSS3 puro + JavaScript vanilla
-Sin frameworks, sin dependencias externas salvo Google Fonts
-Compatible con Chrome mobile (principal target) y desktop
+Sin frameworks. Google Fonts como única dependencia externa.
+Target principal: Chrome mobile (A32 y similares)
+Compatible desktop: sí, con media query 768px+

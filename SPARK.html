@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una pregunta importante 🕺</title>
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  CONFIGURACIÓN → editá el objeto CONFIG en el <script>       ║
+║  abajo del todo. Ahí están todos los textos, el número de    ║
+║  WhatsApp, el video y los mensajes del botón NO.             ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:    #0a0a0a;
+  --pink:  #f0436a;
+  --gold:  #e8c97a;
+  --ink:   #f5f0eb;
+  --ink2:  #9a9090;
+
+  /* ── VIDEO ─────────────────────────────────────────────────
+     --video-ratio:     16/9 = horizontal | 9/16 = vertical
+     --video-max-width: ancho en móvil (desktop se agranda)
+     --video-radius:    redondeo de esquinas
+  ─────────────────────────────────────────────────────────── */
+  --video-ratio:     16/9;
+  --video-max-width: 420px;
+  --video-radius:    20px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 32px 16px 60px;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, #2a0a14 0%, transparent 70%),
+    radial-gradient(ellipse 40% 30% at 80% 80%, #0a1a2a 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── CONTAINER ── */
+.container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  animation: containerIn 1s ease both;
+}
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  animation: fadeDown .7s ease both;
+}
+.header .eyebrow {
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--pink);
+  margin-bottom: 10px;
+}
+.header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+  font-style: italic;
+  line-height: 1.25;
+}
+.header h1 span { color: var(--gold); font-style: normal; }
+
+/* ── VIDEO ── */
+.video-wrap {
+  width: 100%;
+  max-width: var(--video-max-width);
+  max-height: var(--video-max-height, none);
+  aspect-ratio: var(--video-ratio);
+  border-radius: var(--video-radius);
+  overflow: hidden;
+  background: #111;
+  animation: fadeUp .8s .2s ease both;
+  box-shadow: 0 0 0 1px rgba(240,67,106,.25), 0 20px 60px rgba(0,0,0,.7);
+  position: relative;
+}
+.video-wrap video {
+  width: 100%;
+  display: block;
+  aspect-ratio: var(--video-ratio);
+  object-fit: contain;
+}
+.video-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--video-radius);
+  border: 1px solid rgba(240,67,106,.2);
+  pointer-events: none;
+}
+
+/* Botón sonido flotante dentro del video */
+.sound-float {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  z-index: 10;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(232,201,122,.5);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .7rem;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 7px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all .2s ease;
+  animation: soundPulse 2s ease-in-out infinite;
+  white-space: nowrap;
+}
+.sound-float:hover, .sound-float:active {
+  background: rgba(232,201,122,.2);
+  border-color: var(--gold);
+  animation: none;
+}
+.sound-float.active {
+  border-color: rgba(255,255,255,.3);
+  color: var(--ink);
+  animation: none;
+  background: rgba(0,0,0,.4);
+}
+
+/* ── PREGUNTA ── */
+.question-label {
+  font-family: 'Playfair Display', serif;
+  font-size: .9rem;
+  font-style: italic;
+  color: var(--ink2);
+  text-align: center;
+  animation: fadeUp .8s .4s ease both;
+}
+
+/* ── BOTONES SI / NO ── */
+.choice-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  animation: fadeUp .8s .5s ease both;
+}
+
+/* Botón SÍ */
+.btn-si {
+  flex: 1;
+  padding: 22px 16px;
+  border-radius: 16px;
+  border: 2px solid rgba(240,67,106,.6);
+  background: linear-gradient(135deg, rgba(240,67,106,.2), rgba(10,10,10,.6));
+  color: var(--ink);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: 0 0 30px rgba(240,67,106,.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.btn-si:hover, .btn-si:active {
+  border-color: var(--pink);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 35px rgba(240,67,106,.3);
+}
+.btn-si .btn-emoji { font-size: 1.8rem; }
+.btn-si .btn-sub   { font-family: 'DM Sans', sans-serif; font-size: .65rem; color: var(--gold); }
+
+/* Botón NO */
+.btn-no {
+  flex: 1;
+  padding: 22px 16px;
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
+  color: var(--ink2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: all .25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1.3;
+  text-align: center;
+}
+.btn-no:hover { border-color: rgba(255,255,255,.15); color: var(--ink); }
+.btn-no:active { transform: scale(.97); }
+
+/* cuando el NO está al límite del drama */
+.btn-no.drama {
+  border-color: rgba(232,201,122,.3);
+  color: var(--gold);
+}
+.btn-no.rendido {
+  border-color: rgba(240,67,106,.4);
+  color: var(--pink);
+  animation: shake .4s ease;
+}
+
+/* ── FOOTER ── */
+.footer {
+  font-size: .6rem;
+  color: #3a3535;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  animation: fadeUp .8s .7s ease both;
+}
+
+/* ── PANTALLA DE CARGA ── */
+#intro-overlay {
+  position: fixed;
+  inset: 0;
+  background: #05050f;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: opacity 1s ease, visibility 1s ease;
+}
+#intro-overlay.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.poro-wrap { animation: poroFloat 2s ease-in-out infinite; }
+.poro-wrap img {
+  width: min(220px, 55vw);
+  height: auto;
+  border-radius: 16px;
+  display: block;
+}
+.loading-label {
+  font-size: .7rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink2);
+}
+.progress-bar-wrap {
+  width: min(280px, 70vw);
+  height: 6px;
+  background: rgba(255,255,255,.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--pink), var(--gold));
+  border-radius: 4px;
+  transition: width .05s linear;
+}
+
+/* ── BURST DE EMOJIS ── */
+.burst-emoji {
+  position: fixed;
+  font-size: 1.6rem;
+  pointer-events: none;
+  z-index: 9999;
+  animation: burstFly var(--dur, .9s) ease-out forwards;
+  transform-origin: center;
+}
+@keyframes soundPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(232,201,122,.0); border-color: rgba(232,201,122,.5); }
+  50%     { box-shadow: 0 0 0 5px rgba(232,201,122,.25); border-color: rgba(232,201,122,.9); }
+}
+
+@keyframes burstFly {
+  0%   { opacity: 1; transform: translate(0,0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.4) rotate(var(--rot)); }
+}
+
+/* Botón SÍ al hacer click */
+.btn-si.celebrando {
+  animation: siCelebra .5s ease forwards;
+}
+@keyframes siCelebra {
+  0%   { transform: scale(1); box-shadow: 0 0 30px rgba(240,67,106,.15); }
+  40%  { transform: scale(1.07); box-shadow: 0 0 60px rgba(240,67,106,.6); }
+  70%  { transform: scale(.97); }
+  100% { transform: scale(1.03); box-shadow: 0 0 50px rgba(240,67,106,.4); }
+}
+
+/* Botón NO al rendirse */
+.btn-no.celebrando {
+  animation: noCelebra .5s ease forwards;
+  border-color: var(--pink) !important;
+  color: var(--pink) !important;
+}
+@keyframes noCelebra {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.06) rotate(-2deg); }
+  60%  { transform: scale(.96) rotate(2deg); }
+  100% { transform: scale(1.03); }
+}
+
+/* ── ANIMACIONES ── */
+@keyframes fadeDown    { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp      { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+@keyframes containerIn { from{opacity:0} to{opacity:1} }
+@keyframes poroFloat   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-6px); }
+  40%     { transform: translateX(6px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+
+/* ── DESKTOP ── */
+@media (min-width: 768px) {
+  :root { --video-max-width: 700px; }
+  .container { max-width: 700px; }
+}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA DE CARGA -->
+<div id="intro-overlay">
+  <div class="poro-wrap">
+    <!-- Imagen de carga: subí tu archivo al repo con el nombre que uses acá -->
+    <img id="poro-img" alt="">
+  </div>
+  <div class="loading-label" id="loading-text">cargando...</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progress-fill"></div>
+  </div>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div class="container">
+
+  <!-- HEADER (generado por JS desde CONFIG) -->
+  <div class="header" id="header"></div>
+
+  <!-- VIDEO + BOTÓN SONIDO FLOTANTE -->
+  <div class="video-wrap">
+    <video id="vid" autoplay loop muted playsinline></video>
+    <button class="sound-float" id="btn-sound" onclick="toggleSonido()">🔇 Activar sonido</button>
+  </div>
+
+  <!-- PREGUNTA -->
+  <div class="question-label" id="question-label"></div>
+
+  <!-- BOTONES SÍ / NO -->
+  <div class="choice-row">
+    <button class="btn-si" id="btn-si" onclick="irAlCine()">
+      <span class="btn-emoji" id="si-emoji"></span>
+      <span id="si-texto"></span>
+      <span class="btn-sub" id="si-sub"></span>
+    </button>
+
+    <button class="btn-no" id="btn-no" onclick="clickNo()">
+      <span id="no-texto"></span>
+    </button>
+  </div>
+
+  <div class="footer">hecho con 🖤</div>
+
+</div>
+
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   CONFIG — EDITÁ SOLO ESTO
+   ════════════════════════════════════════════════════════════ */
+const CONFIG = {
+
+  /* Número de WhatsApp (formato Argentina: 54 9 11 XXXX-XXXX) */
+  numero_wa: "5491161443954",
+
+  /* Archivo de video (tiene que estar en el mismo repo) */
+  video: "SouthPark.mp4",
+
+  /* Orientación del video: "horizontal" (16:9) | "vertical" (9:16) | "square" (1:1) */
+  video_orientacion: "square",
+
+  /* Imagen de la pantalla de carga */
+  imagen_carga: "PORO JINX 13KB.webp",
+
+  /* Textos de carga (se muestran al azar) */
+  textos_carga: [
+    "preparando algo importante...",
+    "cargando tu sorpresa...",
+    "esto es serio 🕺",
+  ],
+
+  /* Header */
+  eyebrow: "✨ pregunta del año",
+  titulo: "¿Querés ir a ver\nel <span>Ayuwoki</span>\nconmigo?",
+
+  /* Subtítulo debajo del video */
+  pregunta: "dale, que puede salir bien 👀",
+
+  /* Botón SÍ */
+  btn_si: {
+    emoji:   "🎬",
+    texto:   "Sí, vamos",
+    sub:     "buena decisión",
+    mensaje: "Sí quiero ir a ver el Ayuwoki",
+  },
+
+  /* Botón NO — cada click muestra el siguiente texto.
+     El último de la lista abre WhatsApp igual 😈         */
+  btn_no: [
+    "No ni en pedo",
+    "No, gracias",
+    "Que no...",
+    "¿Estás sord@?",
+    "N — O. NO.",
+    "me estás matando 😭",
+    "...ay bueno",
+    "OKAY VOY 😭🕺",   // ← este abre WhatsApp
+  ],
+
+  /* ── FEATURES OPCIONALES ────────────────────────────────────
+     Cambiá false → true para activar cada una              */
+
+  /* Título de la pestaña del navegador */
+  titulo_pagina: "Una pregunta importante 🕺",
+
+  /* Vibración háptica en celular al clickear botones
+     Requiere Android Chrome (iOS no lo soporta)           */
+  vibrar: false,
+
+  /* Burst de emojis al cerrarse la pantalla de carga       */
+  confetti_entrada: false,
+
+};
+/* ════════════════════════════════════════════════════════════
+   FIN CONFIG — de acá para abajo no hace falta tocar nada
+   ════════════════════════════════════════════════════════════ */
+
+let noIndex = 0;
+
+/* Renderizar todo desde CONFIG */
+function renderUI() {
+  const vid = document.getElementById('vid');
+  vid.src = CONFIG.video;
+  vid.load(); // forzar carga aunque el src se seteó por JS
+
+  /* Orientación del video */
+  const ratioMap = { vertical: '9/16', horizontal: '16/9', square: '1/1' };
+  const ratio = ratioMap[CONFIG.video_orientacion] || '16/9';
+  document.documentElement.style.setProperty('--video-ratio', ratio);
+  if (CONFIG.video_orientacion === 'vertical') {
+    document.documentElement.style.setProperty('--video-max-height', '58vh');
+    document.documentElement.style.setProperty('--video-max-width', '100%');
+  }
+  if (CONFIG.video_orientacion === 'square') {
+    /* min(420px, 70vh) → nunca más grande que la pantalla en ningún eje */
+    document.documentElement.style.setProperty('--video-max-width', 'min(420px, 70vh)');
+  }
+  document.getElementById('poro-img').src = CONFIG.imagen_carga;
+  document.title = CONFIG.titulo_pagina || 'Una pregunta importante 🕺';
+
+  document.getElementById('header').innerHTML = `
+    <div class="eyebrow">${CONFIG.eyebrow}</div>
+    <h1>${CONFIG.titulo.replace(/\n/g, '<br>')}</h1>
+  `;
+  document.getElementById('question-label').textContent = CONFIG.pregunta;
+
+  const si = CONFIG.btn_si;
+  document.getElementById('si-emoji').textContent = si.emoji;
+  document.getElementById('si-texto').textContent  = si.texto;
+  document.getElementById('si-sub').textContent    = si.sub;
+
+  document.getElementById('no-texto').textContent = CONFIG.btn_no[0];
+}
+
+/* Burst de emojis desde un elemento */
+function lanzarBurst(el, emojis) {
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top  + rect.height / 2;
+  const count = 10;
+  for (let i = 0; i < count; i++) {
+    const span = document.createElement('span');
+    span.className = 'burst-emoji';
+    span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    const angle  = (Math.PI * 2 / count) * i + (Math.random() - .5) * .5;
+    const dist   = 80 + Math.random() * 100;
+    const dur    = (.6 + Math.random() * .5).toFixed(2);
+    const rot    = (Math.random() * 360 - 180).toFixed(0) + 'deg';
+    span.style.cssText = `
+      left: ${cx}px; top: ${cy}px;
+      --tx: ${(Math.cos(angle) * dist).toFixed(0)}px;
+      --ty: ${(Math.sin(angle) * dist).toFixed(0)}px;
+      --dur: ${dur}s;
+      --rot: ${rot};
+    `;
+    document.body.appendChild(span);
+    span.addEventListener('animationend', () => span.remove());
+  }
+}
+
+let yaFue = false;
+
+/* Botón SÍ */
+function irAlCine() {
+  if (yaFue) return;
+  yaFue = true;
+  const btn = document.getElementById('btn-si');
+  const msg = encodeURIComponent(CONFIG.btn_si.mensaje);
+  btn.classList.add('celebrando');
+  lanzarBurst(btn, ['🎬','❤️','🕺','✨','🍿','🎇']);
+  if (CONFIG.vibrar) navigator.vibrate?.([80, 40, 80]);
+  setTimeout(() => {
+    window.open(`https://wa.me/${CONFIG.numero_wa}?text=${msg}`, '_blank');
+    yaFue = false;  // re-habilitar por si el popup fue bloqueado
+    btn.classList.remove('celebrando');
+  }, 900);
+}
+
+/* Botón NO */
+function clickNo() {
+  if (yaFue) return;                      // ya se abrió WA, ignorar
+  noIndex++;
+  const textos = CONFIG.btn_no;
+  const btn    = document.getElementById('btn-no');
+
+  if (noIndex >= textos.length - 1) {
+    /* Último texto → rindió, celebra y abre WhatsApp */
+    document.getElementById('no-texto').textContent = textos[textos.length - 1];
+    btn.classList.remove('drama');
+    btn.classList.add('rendido');
+    if (CONFIG.vibrar) navigator.vibrate?.([40, 30, 40, 30, 120]);
+    setTimeout(() => {
+      btn.style.animation = 'none';       // resetear shake antes de celebrar
+      btn.offsetHeight;                   // reflow forzado
+      btn.classList.add('celebrando');
+      lanzarBurst(btn, ['😭','🕺','🎬','💀','✨','🍿']);
+      setTimeout(() => irAlCine(), 900);
+    }, 500);
+    return;
+  }
+
+  document.getElementById('no-texto').textContent = textos[noIndex];
+  if (CONFIG.vibrar) navigator.vibrate?.(30);
+
+  /* Clases de drama progresivo */
+  btn.classList.remove('drama', 'rendido');
+  if (noIndex >= Math.floor(textos.length * 0.5)) btn.classList.add('drama');
+  if (noIndex >= textos.length - 2)               btn.classList.add('rendido');
+}
+
+/* Sonido */
+function toggleSonido() {
+  const vid = document.getElementById('vid');
+  const btn = document.getElementById('btn-sound');
+  vid.muted = !vid.muted;
+  if (!vid.muted) {
+    btn.textContent = '🔊 Sonido';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = '🔇 Activar sonido';
+    btn.classList.remove('active');
+  }
+}
+
+/* Pantalla de carga — timer rápido independiente del video */
+function initLoading() {
+  const fill    = document.getElementById('progress-fill');
+  const overlay = document.getElementById('intro-overlay');
+  const label   = document.getElementById('loading-text');
+  const textos  = CONFIG.textos_carga;
+
+  label.textContent = textos[Math.floor(Math.random() * textos.length)];
+
+  let prog = 0;
+  const interval = setInterval(() => {
+    prog += Math.random() * 5 + 2;
+    if (prog >= 100) {
+      prog = 100;
+      fill.style.width = '100%';
+      clearInterval(interval);
+      setTimeout(() => {
+        overlay.classList.add('hide');
+        if (CONFIG.confetti_entrada) {
+          lanzarBurst(document.getElementById('vid'), ['✨','🎬','❤️','🕺','🍿','🎇','💫','🌟']);
+        }
+      }, 400);
+    } else {
+      fill.style.width = prog + '%';
+    }
+  }, 40);
+}
+
+renderUI();
+initLoading();
+</script>
+
+</body>
+</html>
